@@ -1,6 +1,6 @@
 
 import React from 'react';
-import Navigation from './components/Navigation';
+import Navigation from './components/ResponsiveNavigation';
 
 const Section: React.FC<{ id: string; title: string; subtitle?: string; children: React.ReactNode; className?: string }> = ({ id, title, subtitle, children, className }) => (
   <section id={id} className={`section ${className}`}>
@@ -67,7 +67,7 @@ const App: React.FC = () => {
 
         <div className="hero-content">
           <div className="hero-tagline">
-            AInTandem.org 理想宣言 v1
+            AInTandem.org 理想宣言 V1
           </div>
           <h1 className="hero-title">
             人與 AI 的 <span className="hero-title-gradient">共生創作場</span>
@@ -103,8 +103,8 @@ const App: React.FC = () => {
       <Section id="philosophy" title="理念與目標" subtitle="建立每個人專屬的 AI 合作體系，並在保有主權的基礎上相互協作。">
         <div className="grid md:grid-cols-3 gap-8">
           {[
-            { title: "AI 共創", desc: "現在進行式。人與 AI 並行操作，共享同一個實體工作環境。", status: "Active" },
-            { title: "開源共享", desc: "目前推進階段。成立 aintandem.org 的核心目的。", status: "In Progress" },
+            { title: "AI 共創", desc: "現在進行式。人與 AI 並行操作，共享同一個工作環境。", status: "Active" },
+            { title: "開源共享", desc: "進程階段。成立 aintandem.org 的核心目的。", status: "In Progress" },
             { title: "社群共治", desc: "未來發展目標。基於個人知識及經驗主權的網路合作。", status: "Vision" }
           ].map((item, i) => (
             <div key={i} className="p-8 rounded-3xl bg-slate-900/50 border border-slate-800 hover:border-cyan-500/30 transition-all group">
