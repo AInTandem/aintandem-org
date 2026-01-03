@@ -1,27 +1,64 @@
 ---
 import { Image } from 'astro:assets';
 import logoImage from '../../public/logo.png';
+import { getTranslations, getAllLocales, getLocalizedPath } from '../i18n/utils';
+import type { Locale } from 'astro:i18n';
+
+interface Props {
+  locale?: Locale;
+}
+
+const { locale = 'zh-TW' } = Astro.props;
+const translations = getTranslations(locale);
+const allLocales = getAllLocales();
 
 const currentPath = Astro.url.pathname;
+const basePath = `/${locale}`;
 
 const navLinks = [
-  { name: '全部文章', href: '/blog' },
-  { name: '公告', href: '/blog/tag/announcement' },
-  { name: '架構與技術', href: '/blog/tag/architecture' },
-  { name: '思想與隨筆', href: '/blog/tag/thoughts' },
-  { name: '路線圖', href: '/blog/tag/roadmap' },
-  { name: '專案理念', href: '/blog/tag/philosophy' },
-  { name: '官網首頁', href: '/'},
+  { nameKey: 'allPosts', href: '/blog' },
+  { nameKey: 'announcement', href: '/blog/tag/announcement' },
+  { nameKey: 'architecture', href: '/blog/tag/architecture' },
+  { nameKey: 'thoughts', href: '/blog/tag/thoughts' },
+  { nameKey: 'roadmap', href: '/blog/tag/roadmap' },
+  { nameKey: 'philosophy', href: '/blog/tag/philosophy' },
+  { nameKey: 'home', href: '/' },
 ];
+
+// Helper to get localized href
+function getLocalizedHref(href: string) {
+  return getLocalizedPath(locale, href);
+}
 ---
 
 <nav class="nav-blog-mobile">
   <div class="nav-blog-mobile-bar">
     <div class="nav-blog-mobile-container">
-      <a href="/blog" class="nav-brand">
+      <a href={getLocalizedHref('/blog')} class="nav-brand">
         <Image src={logoImage} alt="AInTandem Logo" class="nav-brand-logo" width={32} height={32} loading="eager" />
-        <span class="nav-brand-text">AInTandem Blog</span>
+        <span class="nav-brand-text">AInTandem {translations.blog.title}</span>
       </a>
+
+      <!-- Language Switcher -->
+      <div class="nav-mobile-language">
+        <button class="nav-mobile-language-button" id="blog-mobile-language-button" aria-expanded="false" aria-haspopup="true">
+          <span class="nav-mobile-language-current">{allLocales.find(l => l.code === locale)?.code.toUpperCase() || locale.toUpperCase()}</span>
+          <svg class="nav-mobile-language-arrow" width="10" height="10" viewBox="0 0 10 10" fill="none">
+            <path d="M2 3L5 7L8 3" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
+        <div class="nav-mobile-language-menu" id="blog-mobile-language-dropdown-menu">
+          {allLocales.map((loc) => (
+            <a
+              href={getLocalizedPath(loc.code as Locale, currentPath.replace(basePath, '') || '/')}
+              class="nav-mobile-language-option"
+              class:active={loc.code === locale}
+            >
+              {loc.name}
+            </a>
+          ))}
+        </div>
+      </div>
 
       <button
         id="blog-mobile-menu-button"
@@ -45,18 +82,36 @@ const navLinks = [
       <div class="mobile-menu-links">
         {navLinks.map((link) => (
           <a
-            href={link.href}
+            href={getLocalizedHref(link.href)}
             data-nav-link={link.href}
             data-menu-close
             class="nav-link-mobile"
             class:active={currentPath === link.href || currentPath.startsWith(link.href + '/')}
           >
-            {link.name}
+            {link.nameKey === 'allPosts' ? translations.blog.allPosts :
+             link.nameKey === 'home' ? translations.nav.home :
+             translations.blog.tags[link.nameKey as keyof typeof translations.blog.tags] || link.nameKey}
           </a>
         ))}
 
+        <!-- Language Switcher -->
+        <div class="mobile-language-switcher">
+          <div class="mobile-language-title">語言 / Language</div>
+          <div class="mobile-language-links">
+            {allLocales.map((loc) => (
+              <a
+                href={getLocalizedPath(loc.code as Locale, currentPath.replace(basePath, '') || '/')}
+                class="mobile-language-link"
+                class:active={loc.code === locale}
+              >
+                {loc.name}
+              </a>
+            ))}
+          </div>
+        </div>
+
         <div class="mobile-menu-social">
-          <div class="mobile-menu-social-title">社群連結</div>
+          <div class="mobile-menu-social-title">{translations.nav.community}</div>
           <div class="mobile-menu-social-links">
             <a href="https://github.com/AInTandem/" target="_blank" rel="noopener noreferrer" class="mobile-social-link">
               <svg class="mobile-social-icon" fill="currentColor" viewBox="0 0 24 24">
@@ -84,6 +139,11 @@ const navLinks = [
   const menuButton = document.getElementById('blog-mobile-menu-button');
   const mobileMenu = document.getElementById('blog-mobile-menu');
 
+  // Language dropdown elements
+  const languageButton = document.getElementById('blog-mobile-language-button');
+  const languageMenu = document.getElementById('blog-mobile-language-dropdown-menu');
+  let isLanguageDropdownOpen = false;
+
   // Function to open menu
   function openMenu() {
     mobileMenu?.classList.add('is-open');
@@ -110,6 +170,39 @@ const navLinks = [
     }
   });
 
+  // Language dropdown functions
+  function toggleLanguageDropdown() {
+    isLanguageDropdownOpen = !isLanguageDropdownOpen;
+    if (languageButton) {
+      languageButton.setAttribute('aria-expanded', isLanguageDropdownOpen.toString());
+    }
+    if (languageMenu) {
+      languageMenu.classList.toggle('is-open', isLanguageDropdownOpen);
+    }
+  }
+
+  function closeLanguageDropdown() {
+    isLanguageDropdownOpen = false;
+    if (languageButton) {
+      languageButton.setAttribute('aria-expanded', 'false');
+    }
+    if (languageMenu) {
+      languageMenu.classList.remove('is-open');
+    }
+  }
+
+  languageButton?.addEventListener('click', (e) => {
+    e.stopPropagation();
+    toggleLanguageDropdown();
+  });
+
+  // Close dropdowns when clicking outside
+  document.addEventListener('click', (e) => {
+    if (isLanguageDropdownOpen && !e.target.closest('.nav-mobile-language')) {
+      closeLanguageDropdown();
+    }
+  });
+
   // Close menu handlers
   document.querySelectorAll('[data-menu-close]').forEach(btn => {
     btn.addEventListener('click', closeMenu);
@@ -119,6 +212,7 @@ const navLinks = [
   window.addEventListener('resize', () => {
     if (window.innerWidth >= 768) {
       closeMenu();
+      closeLanguageDropdown();
     }
   });
 </script>
@@ -201,6 +295,89 @@ const navLinks = [
     color: var(--color-primary-400);
   }
 
+  /* Mobile Language Switcher */
+  .nav-mobile-language {
+    position: relative;
+    margin-right: var(--spacing-2);
+  }
+
+  .nav-mobile-language-button {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-1);
+    padding: var(--spacing-1) var(--spacing-2);
+    background-color: rgba(15, 23, 42, 0.5);
+    border: 1px solid var(--color-slate-700);
+    border-radius: var(--radius-md);
+    color: var(--color-text-secondary);
+    font-size: var(--font-size-xs);
+    font-weight: var(--font-weight-medium);
+    cursor: pointer;
+    transition: all var(--transition-standard);
+  }
+
+  .nav-mobile-language-button:hover {
+    background-color: rgba(14, 165, 233, 0.1);
+    border-color: var(--color-primary-500);
+    color: var(--color-primary-400);
+  }
+
+  .nav-mobile-language-current {
+    white-space: nowrap;
+  }
+
+  .nav-mobile-language-arrow {
+    transition: transform var(--transition-standard);
+  }
+
+  .nav-mobile-language-button[aria-expanded="true"] .nav-mobile-language-arrow {
+    transform: rotate(180deg);
+  }
+
+  .nav-mobile-language-menu {
+    position: absolute;
+    top: calc(100% + var(--spacing-2));
+    right: 0;
+    min-width: 100px;
+    background-color: var(--color-slate-900);
+    border: 1px solid var(--color-slate-700);
+    border-radius: var(--radius-md);
+    padding: var(--spacing-1);
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-4px);
+    transition: all var(--transition-standard) cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: 100;
+  }
+
+  .nav-mobile-language-menu.is-open {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+  }
+
+  .nav-mobile-language-option {
+    display: block;
+    padding: var(--spacing-2) var(--spacing-3);
+    color: var(--color-text-secondary);
+    text-decoration: none;
+    font-size: var(--font-size-sm);
+    border-radius: var(--radius-sm);
+    transition: all var(--transition-standard);
+    white-space: nowrap;
+  }
+
+  .nav-mobile-language-option:hover {
+    background-color: rgba(14, 165, 233, 0.1);
+    color: var(--color-primary-400);
+  }
+
+  .nav-mobile-language-option.active {
+    background-color: rgba(14, 165, 233, 0.15);
+    color: var(--color-primary-500);
+    font-weight: var(--font-weight-medium);
+  }
+
   .nav-menu-icon {
     display: block;
     width: var(--spacing-6);
@@ -253,20 +430,6 @@ const navLinks = [
     padding-top: calc(var(--spacing-3) * 2 + var(--spacing-8)); /* Space for nav bar */
   }
 
-  .mobile-menu-header {
-    padding: var(--spacing-6);
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    border-bottom: 1px solid var(--color-slate-800);
-  }
-
-  .mobile-menu-title {
-    font-size: var(--font-size-xl);
-    font-weight: var(--font-weight-bold);
-    color: var(--color-text-primary);
-  }
-
   .mobile-menu-links {
     flex: 1;
     display: flex;
@@ -293,6 +456,53 @@ const navLinks = [
 
   .nav-link-mobile.active {
     background-color: rgba(14, 165, 233, 0.15);
+    color: var(--color-primary-500);
+  }
+
+  .mobile-language-switcher {
+    margin-top: var(--spacing-4);
+    padding: var(--spacing-4);
+    background-color: var(--color-slate-900);
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--color-slate-800);
+  }
+
+  .mobile-language-title {
+    font-size: var(--font-size-xs);
+    font-weight: var(--font-weight-bold);
+    color: var(--color-text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: var(--spacing-3);
+  }
+
+  .mobile-language-links {
+    display: flex;
+    gap: var(--spacing-2);
+  }
+
+  .mobile-language-link {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--spacing-3);
+    background-color: var(--color-slate-800);
+    border-radius: var(--radius-md);
+    color: var(--color-text-secondary);
+    text-decoration: none;
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-medium);
+    transition: all var(--transition-standard);
+  }
+
+  .mobile-language-link:hover {
+    background-color: rgba(14, 165, 233, 0.1);
+    color: var(--color-primary-400);
+  }
+
+  .mobile-language-link.active {
+    background-color: rgba(14, 165, 233, 0.2);
     color: var(--color-primary-500);
   }
 

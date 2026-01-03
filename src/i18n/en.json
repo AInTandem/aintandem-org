@@ -1,0 +1,198 @@
+{
+  "site": {
+    "name": "AInTandem",
+    "tagline": "Co-creation Space for Humans and AI",
+    "description": "Dedicated to localized and specialized AI, realizing a next-generation workspace where humans and AI seamlessly share knowledge and experience."
+  },
+  "nav": {
+    "home": "Home",
+    "blog": "Blog",
+    "philosophy": "Philosophy",
+    "roadmap": "Roadmap",
+    "features": "Features",
+    "design": "Design",
+    "about": "About",
+    "community": "Community",
+    "install": "Install Now"
+  },
+  "blog": {
+    "title": "Blog",
+    "subtitle": "Technical articles, project updates, and AI collaboration practices",
+    "allPosts": "All Posts",
+    "noPosts": "No posts yet",
+    "backToBlog": "Back to Blog",
+    "backToList": "Back to Article List",
+    "relatedPosts": "Related Posts",
+    "readMore": "Read More",
+    "updatedAt": "Updated",
+    "tags": {
+      "announcement": "Announcement",
+      "architecture": "Architecture",
+      "thoughts": "Thoughts",
+      "roadmap": "Roadmap",
+      "philosophy": "Philosophy"
+    }
+  },
+  "hero": {
+    "tagline": "AInTandem.org Manifesto V1",
+    "title": "A Co-creation Space for",
+    "titleGradient": "Humans and AI",
+    "subtitle": "Dedicated to localized and specialized AI<br/>Realizing a next-generation workspace where humans and AI seamlessly share knowledge and experience.",
+    "ctaPrimary": "Get Started with AInTandem",
+    "ctaSecondary": "Read the Manifesto",
+    "credits": ["Lex Yang", "aka unclemon"]
+  },
+  "sections": {
+    "philosophy": {
+      "title": "Philosophy & Goals",
+      "subtitle": "Building a personalized AI collaboration system where individuals maintain sovereignty while working together.",
+      "cards": [
+        {
+          "title": "AI Co-creation",
+          "desc": "In progress. Humans and AI working in parallel, sharing the same workspace.",
+          "status": "Active"
+        },
+        {
+          "title": "Open Source Sharing",
+          "desc": "Current phase. The core purpose of establishing aintandem.org.",
+          "status": "In Progress"
+        },
+        {
+          "title": "Community Governance",
+          "desc": "Future goal. Network collaboration based on personal knowledge and experience sovereignty.",
+          "status": "Vision"
+        }
+      ]
+    },
+    "roadmap": {
+      "title": "Development Roadmap",
+      "subtitle": "Complete system architecture from infrastructure to intelligent workflows.",
+      "cards": [
+        {
+          "title": "Sandboxes",
+          "items": ["Real File System", "Isolated Work Environment", "Real-time Observability"]
+        },
+        {
+          "title": "Workspace",
+          "items": ["Network Proxy", "Port Forwarding", "Code Server & Docker"]
+        },
+        {
+          "title": "AI Coder / Agent",
+          "items": ["Qwen / Claude", "Gemini / Codex", "Configurable Agents"]
+        },
+        {
+          "title": "Context / Workflow",
+          "items": ["Sharable Knowledge", "Project Specs", "Human In-The-Loop"]
+        }
+      ]
+    },
+    "features": {
+      "title": "Core Features",
+      "subtitle": "How AInTandem redefines 'collaborating with AI'?",
+      "items": [
+        {
+          "number": "01",
+          "title": "Parallel Sandbox Workspace",
+          "desc": "Each sandbox is an independent working environment with a <b>real file system</b> and project setup, not a cloud-generated demo.",
+          "list": [
+            "Real Sandbox: Independent workspace",
+            "Multi-device access: Local, laptop, or browser connection",
+            "Parallel: Human and AI operating simultaneously with synchronized observation"
+          ]
+        },
+        {
+          "number": "02",
+          "title": "AI Coder / Agent",
+          "desc": "AI in the system is a <b>\"parallel subject, but not a sovereign subject\"</b>. Not a fully automated black box, but a controlled collaborative partner.",
+          "list": [
+            "Autonomous action: Can operate continuously for 30-60 minutes to complete specific tasks",
+            "Reclaimable/Monitorable: Humans have final decision and interruption authority",
+            "Goal-oriented: Focused on completing specific engineering tasks"
+          ]
+        },
+        {
+          "number": "03",
+          "title": "Synced Vision & Context",
+          "badge": "In Development",
+          "desc": "Solving the problem of 'you and AI seeing different worlds'. Through the <b>Context Manager</b> module, humans and AI maintain fully synchronized development context."
+        },
+        {
+          "number": "04",
+          "title": "Codebase Understanding & Reverse Engineering",
+          "badge": "In Development",
+          "desc": "Deep analysis of existing codebases. Automatically generate architecture documentation, mental models, Call Graphs, and precise DOM ↔ React Component mappings."
+        }
+      ]
+    },
+    "philosophyDesign": {
+      "title": "System Design Philosophy",
+      "subtitle": "What we stand for, what we are not.",
+      "is": "AInTandem is...",
+      "isNot": "AInTandem is not...",
+      "isList": [
+        "Human-led parallel collaboration system",
+        "Model Agnostic architecture",
+        "Real environment, real projects, real files",
+        "Long-term autonomous action but reclaimable anytime"
+      ],
+      "isNotList": [
+        "A flashy demo that generates apps with one prompt",
+        "Unmonitored black-box agents with destructive permissions",
+        "A product tied to a specific single model",
+        "Cloud-based disposable temporary environment"
+      ]
+    },
+    "install": {
+      "title": "Installation & Getting Started",
+      "subtitle": "Quickly deploy your AInTandem environment.",
+      "desktop": {
+        "title": "AInTandem Desktop",
+        "desc": "Recommended for general developers. Provides intuitive GUI for managing Workspace, Sandbox, and AI Agents.",
+        "button": "Download Desktop (macOS/Win/Ubuntu)"
+      },
+      "docker": {
+        "title": "Docker Compose",
+        "code": "git clone https://github.com/AInTandem/deploy.git<br/>cd deploy && docker compose up -d",
+        "note": "Suitable for server deployment or advanced users. Please ensure Docker environment is installed."
+      }
+    },
+    "specs": {
+      "title": "Flexy Sandbox Specifications",
+      "subtitle": "Standardized and customizable sandbox environments.",
+      "table": {
+        "component": "Component",
+        "details": "Details",
+        "os": {
+          "name": "Operating System",
+          "value": "Ubuntu 22.04 LTS"
+        },
+        "devTools": {
+          "name": "Development Tools",
+          "value": "Node.js (LTS), Python 3, Git, GitHub CLI (gh)"
+        },
+        "terminal": {
+          "name": "Terminal Management",
+          "value": "ttyd + tmux (Web terminal and multi-session management)"
+        },
+        "editor": {
+          "name": "AI Editor",
+          "value": "CoSpec AI (Markdown Driven Editor)"
+        }
+      }
+    }
+  },
+  "footer": {
+    "brand": "AInTandem.org",
+    "copyright": "© 2025 Lex Yang (unclemon). Built for the future of human-AI collaboration.",
+    "github": "GitHub",
+    "discord": "Discord",
+    "documentation": "Documentation"
+  },
+  "language": {
+    "name": "English",
+    "switchTo": {
+      "zh-TW": "繁體中文",
+      "zh-CN": "简体中文"
+    }
+  }
+}

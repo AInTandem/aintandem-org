@@ -1,0 +1,198 @@
+{
+  "site": {
+    "name": "AInTandem",
+    "tagline": "人与 AI 的共生创作场",
+    "description": "致力于本地化及专属化 AI，实现人与 AI 无缝共享知识及经验的次世代工作场域。"
+  },
+  "nav": {
+    "home": "首页",
+    "blog": "博客",
+    "philosophy": "理念",
+    "roadmap": "路线图",
+    "features": "功能",
+    "design": "设计",
+    "about": "关于",
+    "community": "社区",
+    "install": "立即安装"
+  },
+  "blog": {
+    "title": "博客",
+    "subtitle": "技术文章、项目更新、与 AI 协作的实践分享",
+    "allPosts": "所有文章",
+    "noPosts": "暂无文章",
+    "backToBlog": "返回博客",
+    "backToList": "返回文章列表",
+    "relatedPosts": "相关文章",
+    "readMore": "阅读更多",
+    "updatedAt": "更新于",
+    "tags": {
+      "announcement": "公告",
+      "architecture": "架构与技术",
+      "thoughts": "思想与随笔",
+      "roadmap": "路线图",
+      "philosophy": "项目理念"
+    }
+  },
+  "hero": {
+    "tagline": "AInTandem.org 理想宣言 V1",
+    "title": "人与 AI 的",
+    "titleGradient": "共生创作场",
+    "subtitle": "致力于本地化及专属化 AI<br/>实现人与 AI 无缝共享知识及经验的次世代工作场域。",
+    "ctaPrimary": "开始使用 AInTandem",
+    "ctaSecondary": "阅读宣言内容",
+    "credits": ["Lex Yang", "aka unclemon"]
+  },
+  "sections": {
+    "philosophy": {
+      "title": "理念与目标",
+      "subtitle": "建立每个人专属的 AI 合作体系，并在保有主权的基础上相互协作。",
+      "cards": [
+        {
+          "title": "AI 共创",
+          "desc": "现在进行式。人与 AI 并行操作，共享同一个工作环境。",
+          "status": "Active"
+        },
+        {
+          "title": "开源共享",
+          "desc": "进程阶段。成立 aintandem.org 的核心目的。",
+          "status": "In Progress"
+        },
+        {
+          "title": "社区共治",
+          "desc": "未来发展目标。基于个人知识及经验主权的网络合作。",
+          "status": "Vision"
+        }
+      ]
+    },
+    "roadmap": {
+      "title": "发展蓝图",
+      "subtitle": "从基础设施到智能工作流的完整系统架构。",
+      "cards": [
+        {
+          "title": "Sandboxes",
+          "items": ["实体文件系统", "隔离工作环境", "实时可观测性"]
+        },
+        {
+          "title": "Workspace",
+          "items": ["Network Proxy", "Port Forwarding", "Code Server & Docker"]
+        },
+        {
+          "title": "AI Coder / Agent",
+          "items": ["Qwen / Claude", "Gemini / Codex", "Configurable Agents"]
+        },
+        {
+          "title": "Context / Workflow",
+          "items": ["Sharable Knowledge", "Project Specs", "Human In-The-Loop"]
+        }
+      ]
+    },
+    "features": {
+      "title": "核心功能解析",
+      "subtitle": "AInTandem 如何重定义「与 AI 协作」？",
+      "items": [
+        {
+          "number": "01",
+          "title": "沙盒并行工作场",
+          "desc": "每个沙盒是独立工作环境，具备<b>真实文件系统</b>与项目环境，而非云端临时生成的 demo。",
+          "list": [
+            "实体沙盒：独立工作空间",
+            "多端接入：本地、笔记本或浏览器连线",
+            "并行性：人与 AI 同时操作、同步观测"
+          ]
+        },
+        {
+          "number": "02",
+          "title": "AI Coder / Agent",
+          "desc": "AI 在系统中是<b>「并行主体，但非主权主体」</b>。不是全自动黑盒，而是受控的协作伙伴。",
+          "list": [
+            "自主行动：可持续运作 30-60 分钟完成具体任务",
+            "可回收/可监控：人拥有最终决策与中断权",
+            "目标导向：专注于完成特定工程任务"
+          ]
+        },
+        {
+          "number": "03",
+          "title": "同步视野与上下文",
+          "badge": "开发中",
+          "desc": "解决「你跟 AI 看不同世界」的问题。透过 <b>Context Manager</b> 模块，人与 AI 保持完全同步的开发语境。"
+        },
+        {
+          "number": "04",
+          "title": "Codebase 理解与逆向",
+          "badge": "开发中",
+          "desc": "深入分析既有代码库。自动产生架构文件、心智模型、Call Graph 以及 DOM ↔ React Component 的精准对应。"
+        }
+      ]
+    },
+    "philosophyDesign": {
+      "title": "系统设计哲学",
+      "subtitle": "我们坚持什么，我们不是什么。",
+      "is": "AInTandem 是...",
+      "isNot": "AInTandem 不是...",
+      "isList": [
+        "人主导的并行协作系统",
+        "模型无关 (Model Agnostic) 的架构",
+        "真实环境、真实项目、真实文件",
+        "长时间自主行动但可随时回收"
+      ],
+      "isNotList": [
+        "一句话生成 App 的炫技 Demo",
+        "无人监控、拥有破坏性权限的黑盒代理",
+        "绑定特定单一模型的产品",
+        "云端抛弃式的暂时环境"
+      ]
+    },
+    "install": {
+      "title": "安装与开始",
+      "subtitle": "快速部署您的 AInTandem 环境。",
+      "desktop": {
+        "title": "AInTandem Desktop",
+        "desc": "推荐一般开发者使用。提供直观的 GUI 管理 Workspace、Sandbox 与 AI Agent。",
+        "button": "下载 Desktop (macOS/Win/Ubuntu)"
+      },
+      "docker": {
+        "title": "Docker Compose",
+        "code": "git clone https://github.com/AInTandem/deploy.git<br/>cd deploy && docker compose up -d",
+        "note": "适合服务器部署或进阶用户。请确保 Docker 环境已安装。"
+      }
+    },
+    "specs": {
+      "title": "Flexy Sandbox 规格",
+      "subtitle": "标准化且可自订的沙盒环境。",
+      "table": {
+        "component": "组件",
+        "details": "详情",
+        "os": {
+          "name": "操作系统",
+          "value": "Ubuntu 22.04 LTS"
+        },
+        "devTools": {
+          "name": "开发工具",
+          "value": "Node.js (LTS), Python 3, Git, GitHub CLI (gh)"
+        },
+        "terminal": {
+          "name": "终端管理",
+          "value": "ttyd + tmux (网页终端和多会话管理)"
+        },
+        "editor": {
+          "name": "AI 编辑器",
+          "value": "CoSpec AI (Markdown Driven Editor)"
+        }
+      }
+    }
+  },
+  "footer": {
+    "brand": "AInTandem.org",
+    "copyright": "© 2025 Lex Yang (unclemon). Built for the future of human-AI collaboration.",
+    "github": "GitHub",
+    "discord": "Discord",
+    "documentation": "Documentation"
+  },
+  "language": {
+    "name": "简体中文",
+    "switchTo": {
+      "zh-TW": "繁體中文",
+      "en": "English"
+    }
+  }
+}

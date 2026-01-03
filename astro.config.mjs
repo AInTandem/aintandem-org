@@ -16,6 +16,13 @@ export default defineConfig({
       entrypoint: 'astro/assets/services/noop',
     },
   },
+  i18n: {
+    defaultLocale: 'zh-TW',
+    locales: ['zh-TW', 'en', 'zh-CN'],
+    routing: {
+      prefixDefaultLocale: true,
+    },
+  },
   vite: {
     resolve: {
       alias: {

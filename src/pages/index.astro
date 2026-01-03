@@ -1,11 +1,49 @@
 ---
-import BaseLayout from '../layouts/BaseLayout.astro';
-import App from '../../App';
----
+import { getAllLocales } from '../i18n/utils';
 
-<BaseLayout
-  title="AInTandem - 人與 AI 的共生創作場"
-  description="致力於本地化及專屬化 AI，實現人與 AI 無縫共享知識及經驗的次世代工作場域。"
->
-  <App client:load />
-</BaseLayout>
+// Get all supported locales
+const allLocales = getAllLocales();
+const supportedLocales = allLocales.map(l => l.code);
+
+// Parse Accept-Language header to detect preferred locale
+function detectLocale(acceptLanguage: string | null): string {
+  if (!acceptLanguage) {
+    return 'en'; // Fallback to English
+  }
+
+  // Parse Accept-Language header (e.g., "zh-TW,zh;q=0.9,en-US;q=0.8,en;q=0.7")
+  const languages = acceptLanguage
+    .split(',')
+    .map(lang => {
+      const [code, qValue] = lang.trim().split(';q=');
+      const quality = qValue ? parseFloat(qValue) : 1.0;
+      return { code: code.toLowerCase(), quality };
+    })
+    .sort((a, b) => b.quality - a.quality);
+
+  // Try to match exact locale first
+  for (const lang of languages) {
+    const normalizedCode = lang.code.replace('-', '-'); // Normalize
+    if (supportedLocales.includes(normalizedCode as any)) {
+      return normalizedCode;
+    }
+  }
+
+  // Try to match language code only (e.g., 'zh' matches 'zh-TW' or 'zh-CN')
+  for (const lang of languages) {
+    const langCode = lang.code.split('-')[0];
+    const matchedLocale = supportedLocales.find(l => l.startsWith(langCode));
+    if (matchedLocale) {
+      return matchedLocale;
+    }
+  }
+
+  return 'en'; // Fallback to English
+}
+
+// Detect locale from Accept-Language header
+const preferredLocale = detectLocale(Astro.request.headers.get('accept-language'));
+
+// Redirect to localized path
+return Astro.redirect(`/${preferredLocale}/`);
+---

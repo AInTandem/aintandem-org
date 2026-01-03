@@ -1,22 +1,41 @@
 ---
 import { Image } from 'astro:assets';
 import logoImage from '../../public/logo.png';
+import { getTranslations, getAllLocales, getLocalizedPath } from '../i18n/utils';
+import type { Locale } from 'astro:i18n';
+
+interface Props {
+  locale?: Locale;
+}
+
+const { locale = 'zh-TW' } = Astro.props;
+const translations = getTranslations(locale);
+const allLocales = getAllLocales();
 
 const navLinks = [
-  { name: '首頁', href: '/' },
-  { name: '理念', href: '/#philosophy' },
-  { name: '藍圖', href: '/#roadmap' },
-  { name: '核心功能', href: '/#features' },
-  { name: '設計哲學', href: '/#philosophy-design' },
-  { name: '部落格', href: '/blog' },
+  { nameKey: 'home', href: '/' },
+  { nameKey: 'philosophy', href: '/#philosophy' },
+  { nameKey: 'roadmap', href: '/#roadmap' },
+  { nameKey: 'features', href: '/#features' },
+  { nameKey: 'design', href: '/#philosophy-design' },
+  { nameKey: 'blog', href: '/blog' },
 ];
 
 const currentPath = Astro.url.pathname;
+const basePath = `/${locale}`;
+
+// Helper to get localized href
+function getLocalizedHref(href: string) {
+  if (href.startsWith('/#')) {
+    return `${basePath}${href}`;
+  }
+  return getLocalizedPath(locale, href);
+}
 ---
 
 <nav class="nav-desktop">
   <div class="nav-desktop-container">
-    <a href="/" class="nav-brand">
+    <a href={getLocalizedHref('/')} class="nav-brand">
       <Image src={logoImage} alt="AInTandem Logo" class="nav-brand-logo" width={32} height={32} loading="eager" />
       <span class="nav-brand-text">AInTandem</span>
     </a>
@@ -25,14 +44,37 @@ const currentPath = Astro.url.pathname;
       <div class="nav-desktop-links-list">
         {navLinks.map((link) => (
           <a
-            href={link.href}
+            href={getLocalizedHref(link.href)}
             data-nav-link={link.href}
             class="nav-link"
-            class:active={currentPath === link.href}
+            class:active={currentPath === link.href || currentPath.endsWith(link.href)}
           >
-            {link.name}
+            {translations.nav[link.nameKey as keyof typeof translations.nav] || link.nameKey}
           </a>
         ))}
+      </div>
+
+      <div class="nav-divider"></div>
+
+      <!-- Language Switcher Dropdown -->
+      <div class="nav-language-dropdown">
+        <button class="nav-language-button" id="language-dropdown-button" aria-expanded="false" aria-haspopup="true">
+          <span class="nav-language-current">{allLocales.find(l => l.code === locale)?.name || locale}</span>
+          <svg class="nav-language-arrow" width="12" height="12" viewBox="0 0 12 12" fill="none">
+            <path d="M2 4L6 8L10 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
+        <div class="nav-language-menu" id="language-dropdown-menu">
+          {allLocales.map((loc) => (
+            <a
+              href={getLocalizedPath(loc.code as Locale, currentPath.replace(basePath, '') || '/')}
+              class="nav-language-option"
+              class:active={loc.code === locale}
+            >
+              {loc.name}
+            </a>
+          ))}
+        </div>
       </div>
 
       <div class="nav-divider"></div>
@@ -53,11 +95,11 @@ const currentPath = Astro.url.pathname;
       </div>
 
       <a
-        href="/#install"
+        href={getLocalizedHref('/#install')}
         data-nav-link="/#install"
         class="nav-cta"
       >
-        立即安裝
+        {translations.nav.install}
       </a>
     </div>
   </div>
@@ -77,6 +119,43 @@ const currentPath = Astro.url.pathname;
   }
   window.addEventListener('scroll', handleScroll);
   handleScroll();
+
+  // Language dropdown toggle
+  const languageButton = document.getElementById('language-dropdown-button');
+  const languageMenu = document.getElementById('language-dropdown-menu');
+  let isDropdownOpen = false;
+
+  function toggleDropdown() {
+    isDropdownOpen = !isDropdownOpen;
+    if (languageButton) {
+      languageButton.setAttribute('aria-expanded', isDropdownOpen.toString());
+    }
+    if (languageMenu) {
+      languageMenu.classList.toggle('is-open', isDropdownOpen);
+    }
+  }
+
+  function closeDropdown() {
+    isDropdownOpen = false;
+    if (languageButton) {
+      languageButton.setAttribute('aria-expanded', 'false');
+    }
+    if (languageMenu) {
+      languageMenu.classList.remove('is-open');
+    }
+  }
+
+  languageButton?.addEventListener('click', (e) => {
+    e.stopPropagation();
+    toggleDropdown();
+  });
+
+  // Close dropdown when clicking outside
+  document.addEventListener('click', (e) => {
+    if (isDropdownOpen && !e.target.closest('.nav-language-dropdown')) {
+      closeDropdown();
+    }
+  });
 
   // Nav link click handler (smooth scroll)
   document.addEventListener('click', (e) => {
@@ -165,12 +244,12 @@ const currentPath = Astro.url.pathname;
   .nav-desktop-links {
     display: flex;
     align-items: center;
-    gap: var(--spacing-8);
+    gap: var(--spacing-6);
   }
 
   .nav-desktop-links-list {
     display: flex;
-    gap: var(--spacing-6);
+    gap: var(--spacing-5);
   }
 
   .nav-link {
@@ -187,6 +266,88 @@ const currentPath = Astro.url.pathname;
 
   .nav-link.active {
     color: var(--color-primary-500);
+  }
+
+  /* Language Dropdown */
+  .nav-language-dropdown {
+    position: relative;
+    display: flex;
+    align-items: center;
+  }
+
+  .nav-language-button {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-1);
+    padding: var(--spacing-1) var(--spacing-2);
+    background-color: transparent;
+    border: 1px solid var(--color-slate-700);
+    border-radius: var(--radius-md);
+    color: var(--color-text-secondary);
+    font-size: var(--font-size-xs);
+    font-weight: var(--font-weight-medium);
+    cursor: pointer;
+    transition: all var(--transition-standard);
+  }
+
+  .nav-language-button:hover {
+    border-color: var(--color-primary-500);
+    color: var(--color-primary-400);
+  }
+
+  .nav-language-current {
+    white-space: nowrap;
+  }
+
+  .nav-language-arrow {
+    transition: transform var(--transition-standard);
+  }
+
+  .nav-language-button[aria-expanded="true"] .nav-language-arrow {
+    transform: rotate(180deg);
+  }
+
+  .nav-language-menu {
+    position: absolute;
+    top: calc(100% + var(--spacing-2));
+    right: 0;
+    min-width: 120px;
+    background-color: var(--color-slate-900);
+    border: 1px solid var(--color-slate-700);
+    border-radius: var(--radius-md);
+    padding: var(--spacing-1);
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-4px);
+    transition: all var(--transition-standard) cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: 100;
+  }
+
+  .nav-language-menu.is-open {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+  }
+
+  .nav-language-option {
+    display: block;
+    padding: var(--spacing-2) var(--spacing-3);
+    color: var(--color-text-secondary);
+    text-decoration: none;
+    font-size: var(--font-size-sm);
+    border-radius: var(--radius-sm);
+    transition: all var(--transition-standard);
+  }
+
+  .nav-language-option:hover {
+    background-color: rgba(14, 165, 233, 0.1);
+    color: var(--color-primary-400);
+  }
+
+  .nav-language-option.active {
+    background-color: rgba(14, 165, 233, 0.15);
+    color: var(--color-primary-500);
+    font-weight: var(--font-weight-medium);
   }
 
   .nav-social {

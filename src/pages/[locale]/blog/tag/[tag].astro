@@ -1,0 +1,89 @@
+---
+import BaseLayout from '../../../../layouts/BaseLayout.astro';
+import { getCollection } from 'astro:content';
+import { SUPPORTED_TAGS } from '../../../../content/config';
+import { getLocaleFromParams, getTranslations, getLocalizedPath } from '../../../../i18n/utils';
+
+export async function getStaticPaths() {
+  const paths = [];
+  const locales = ['zh-TW', 'en', 'zh-CN'] as const;
+
+  for (const locale of locales) {
+    for (const tag of SUPPORTED_TAGS) {
+      paths.push({
+        params: { locale, tag: tag.name },
+      });
+    }
+  }
+
+  return paths;
+}
+
+const locale = getLocaleFromParams(Astro.params);
+const { tag } = Astro.params;
+const translations = getTranslations(locale);
+
+// Get all published blog posts filtered by current locale and tag
+const allPosts = (await getCollection('blog'))
+  .filter(post => !post.data.draft && post.data.lang === locale)
+  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+
+const filteredPosts = allPosts.filter(post => post.data.tags.includes(tag));
+const tagLabel = translations.blog.tags[tag as keyof typeof translations.blog.tags] || tag;
+---
+
+<BaseLayout
+  title={`${tagLabel} - ${translations.blog.title}`}
+  description={`${translations.blog.subtitle} - ${tagLabel}`}
+  locale={locale}
+>
+  <div class="section">
+    <div class="section-header">
+      <h1 class="section-title">{tagLabel}</h1>
+      <p class="section-subtitle">{translations.blog.subtitle}</p>
+      <div class="section-accent-line"></div>
+    </div>
+
+    <!-- Tag Filter -->
+    <div class="tag-filter">
+      <a href={getLocalizedPath(locale, '/blog')} class:tag-active={!tag} class="tag">{translations.blog.allPosts}</a>
+      {SUPPORTED_TAGS.map(t => (
+        <a href={getLocalizedPath(locale, `/blog/tag/${t.name}`)} class:tag-active={tag === t.name} class="tag">{translations.blog.tags[t.name as keyof typeof translations.blog.tags]}</a>
+      ))}
+    </div>
+
+    <!-- Blog Posts Grid -->
+    <div class="blog-grid">
+      {filteredPosts.length > 0 ? (
+        filteredPosts.map(post => (
+          <a href={getLocalizedPath(locale, `/blog/${post.slug}/`)} class="blog-post-card">
+            <h3>{post.data.title}</h3>
+            <div class="blog-post-meta">
+              <time datetime={post.data.pubDate.toISOString()}>
+                {post.data.pubDate.toLocaleDateString(locale, {
+                  year: 'numeric',
+                  month: 'long',
+                  day: 'numeric'
+                })}
+              </time>
+              {post.data.updatedDate && (
+                <span> · {translations.blog.updatedAt} {post.data.updatedDate.toLocaleDateString(locale)}</span>
+              )}
+            </div>
+            <p class="blog-post-excerpt">{post.data.description}</p>
+            {post.data.tags.length > 0 && (
+              <div class="blog-post-tags">
+                {post.data.tags.map(tagName => {
+                  const tagLabel2 = translations.blog.tags[tagName as keyof typeof translations.blog.tags] || tagName;
+                  return <span class="tag">{tagLabel2}</span>;
+                })}
+              </div>
+            )}
+          </a>
+        ))
+      ) : (
+        <p class="text-slate-400">{translations.blog.noPosts}</p>
+      )}
+    </div>
+  </div>
+</BaseLayout>

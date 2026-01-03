@@ -1,0 +1,148 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import { getCollection } from 'astro:content';
+import { SUPPORTED_TAGS } from '../../../content/config';
+import { getLocaleFromParams, getTranslations, t, getLocalizedPath } from '../../../i18n/utils';
+
+export async function getStaticPaths() {
+  const posts = await getCollection('blog');
+  return posts.map(post => ({
+    params: {
+      locale: post.data.lang,
+      slug: post.slug,
+    },
+    props: { post },
+  }));
+}
+
+const { post } = Astro.props;
+const { Content } = await post.render();
+
+// Get current locale
+const locale = getLocaleFromParams(Astro.params);
+const translations = getTranslations(locale);
+
+// Generate JSON-LD structured data
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": post.data.title,
+  "description": post.data.description,
+  "datePublished": post.data.pubDate.toISOString(),
+  "dateModified": post.data.updatedDate?.toISOString() || post.data.pubDate.toISOString(),
+  "inLanguage": post.data.lang || locale,
+  "author": {
+    "@type": "Organization",
+    "name": "AInTandem Team",
+    "url": "https://aintandem.org"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "AInTandem",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://aintandem.org/logo.png"
+    }
+  },
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": `https://aintandem.org${getLocalizedPath(post.data.lang as any, `/blog/${post.slug}/`)}`
+  },
+  "keywords": post.data.tags.join(", "),
+  "articleSection": post.data.tags[0] || "Technology"
+};
+
+// Get related posts based on tags (same language only)
+const allPosts = await getCollection('blog');
+const relatedPosts = allPosts
+  .filter(p => p.slug !== post.slug && !p.data.draft && p.data.lang === locale)
+  .filter(p => p.data.tags.some(t => post.data.tags.includes(t)))
+  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
+  .slice(0, 3);
+---
+
+<BaseLayout
+  title={`${post.data.title} - ${translations.blog.title}`}
+  description={post.data.description}
+  image={post.data.heroImage}
+  ogType="article"
+  locale={locale}
+  article={{
+    publishedTime: post.data.pubDate.toISOString(),
+    modifiedTime: post.data.updatedDate?.toISOString(),
+    tag: post.data.tags
+  }}
+>
+  <script is:inline set:html={JSON.stringify(jsonLd)} type="application/ld+json" />
+  <article class="blog-post">
+    <!-- Back button at top -->
+    <a href={getLocalizedPath(locale, '/blog')} class="blog-back-button">
+      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M19 12H5M12 19l-7-7 7-7"/>
+      </svg>
+      {translations.blog.backToBlog}
+    </a>
+
+    <div class="blog-post-header">
+      <div class="blog-post-meta">
+        <time datetime={post.data.pubDate.toISOString()}>
+          {post.data.pubDate.toLocaleDateString(locale, {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
+          })}
+        </time>
+        {post.data.updatedDate && (
+          <span> · {translations.blog.updatedTime} {post.data.updatedDate.toLocaleDateString(locale)}</span>
+        )}
+        {post.data.lang && (
+          <span> · {translations.language.name}</span>
+        )}
+      </div>
+
+      <h1 class="blog-post-title">{post.data.title}</h1>
+
+      {post.data.tags.length > 0 && (
+        <div class="blog-post-tags">
+          {post.data.tags.map(tagName => {
+            const tagLabel = translations.blog.tags[tagName as keyof typeof translations.blog.tags] || tagName;
+            return <a href={getLocalizedPath(locale, `/blog/tag/${tagName}`)} class="tag">{tagLabel}</a>;
+          })}
+        </div>
+      )}
+    </div>
+
+    <div class="blog-post-content">
+      <Content />
+    </div>
+
+    <!-- Back to blog link -->
+    <div class="blog-post-nav">
+      <a href={getLocalizedPath(locale, '/blog')} class="btn-secondary">← {translations.blog.backToList}</a>
+    </div>
+
+    <!-- Related posts -->
+    {relatedPosts.length > 0 && (
+      <div class="related-posts">
+        <h2>{translations.blog.relatedPosts}</h2>
+        <div class="related-posts-grid">
+          {relatedPosts.map(relatedPost => (
+            <a href={getLocalizedPath(locale, `/blog/${relatedPost.slug}/`)} class="blog-post-card">
+              <h3>{relatedPost.data.title}</h3>
+              <div class="blog-post-meta">
+                <time datetime={relatedPost.data.pubDate.toISOString()}>
+                  {relatedPost.data.pubDate.toLocaleDateString(locale, {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric'
+                  })}
+                </time>
+              </div>
+              <p class="blog-post-excerpt">{relatedPost.data.description}</p>
+            </a>
+          ))}
+        </div>
+      </div>
+    )}
+  </article>
+</BaseLayout>

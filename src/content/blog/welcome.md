@@ -1,7 +1,7 @@
 ---
 title: '歡迎來到 AInTandem 部落格'
 description: 'AInTandem 專案的技術文章與更新分享，記錄人與 AI 共生創作場的發展歷程。'
-pubDate: 2025-01-03
+pubDate: 2025-01-02
 tags: ['announcement', 'philosophy']
 lang: zh-TW
 heroImage: '/blog-placeholder.jpg'

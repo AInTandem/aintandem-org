@@ -1,0 +1,23 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import App from '../../../App';
+import { getLocaleFromParams, getTranslations, t } from '../../i18n/utils';
+
+export async function getStaticPaths() {
+  const locales = ['zh-TW', 'en', 'zh-CN'] as const;
+  return locales.map(locale => ({
+    params: { locale },
+  }));
+}
+
+const locale = getLocaleFromParams(Astro.params);
+const translations = getTranslations(locale);
+---
+
+<BaseLayout
+  title={`${translations.site.name} - ${translations.site.tagline}`}
+  description={translations.site.description}
+  locale={locale}
+>
+  <App client:load translations={translations} />
+</BaseLayout>

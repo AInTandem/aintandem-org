@@ -3,6 +3,8 @@
  * SEO Component
  * Provides comprehensive meta tags for search engines and social media sharing
  */
+import type { Locale } from 'astro:i18n';
+
 interface Props {
   title?: string;
   description?: string;
@@ -21,6 +23,7 @@ interface Props {
     section?: string;
     tag?: string[];
   };
+  locale?: Locale;
 }
 
 const {
@@ -34,11 +37,14 @@ const {
   nofollow = false,
   ogType = 'website',
   article = undefined,
+  locale = 'zh-TW',
 } = Astro.props;
 
 const fullTitle = title.includes('AInTandem') ? title : `${title} - AInTandem`;
 const robotsDirectives = [noindex && 'noindex', nofollow && 'nofollow'].filter(Boolean).join(', ');
 const imagePath = typeof image === 'string' ? new URL(image, Astro.site).href : image.href;
+// Convert locale to Open Graph format (e.g., 'zh-TW' -> 'zh_TW')
+const ogLocale = locale.replace('-', '_');
 ---
 
 <!-- Primary Meta Tags -->
@@ -56,7 +62,7 @@ const imagePath = typeof image === 'string' ? new URL(image, Astro.site).href : 
 <meta property="og:description" content={description} />
 <meta property="og:image" content={imagePath} />
 <meta property="og:image:alt" content={imageAlt} />
-<meta property="og:locale" content="zh_TW" />
+<meta property="og:locale" content={ogLocale} />
 <meta property="og:site_name" content="AInTandem" />
 
 {article && (
