@@ -1,0 +1,23 @@
+#!/bin/bash
+set -e
+
+GREEN='\\033[0;32m'
+YELLOW='\\033[1;33m'
+RED='\\033[0;31m'
+NC='\\033[0m'
+
+echo "🔍 Running pre-commit checks..."
+
+# Run build check
+echo "${YELLOW}📦 Checking if build passes...${NC}"
+pnpm build
+
+if [ $? -ne 0 ]; then
+  echo ""
+  echo "${RED}❌ Pre-commit check failed: Build errors detected.${NC}"
+  echo "${YELLOW}   Please fix the errors before committing.${NC}"
+  exit 1
+fi
+
+echo "${GREEN}✅ Pre-commit checks passed!${NC}"
+exit 0

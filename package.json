@@ -8,7 +8,8 @@
     "build": "vite build",
     "preview": "vite preview",
     "generate-theme": "node generate-theme.js",
-    "prebuild": "npm run generate-theme"
+    "prebuild": "npm run generate-theme",
+    "hooks:install": "bash scripts/setup-hooks.sh"
   },
   "dependencies": {
     "react": "^19.2.3",
