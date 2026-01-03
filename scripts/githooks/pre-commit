@@ -8,6 +8,17 @@ NC='\\033[0m'
 
 echo "🔍 Running pre-commit checks..."
 
+# Run ESLint
+echo "${YELLOW}▶ Running ESLint...${NC}"
+pnpm lint
+
+if [ $? -ne 0 ]; then
+  echo ""
+  echo "${RED}❌ Pre-commit check failed: Linting errors detected.${NC}"
+  echo "${YELLOW}   Run 'pnpm lint:fix' to auto-fix issues.${NC}"
+  exit 1
+fi
+
 # Run build check
 echo "${YELLOW}📦 Checking if build passes...${NC}"
 pnpm build

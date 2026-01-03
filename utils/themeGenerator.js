@@ -99,13 +99,8 @@ export function generateThemeCSS() {
   }
   
   css += '}\n\n';
-  
-  // Add CSS class mappings to use the variables
-  // Function to convert spacing names to valid CSS variable names
-  function getSpacingVarName(name) {
-    return name.toString().replace(/\./g, '-dot-');
-  }
 
+  // Add CSS class mappings to use the variables
   css += `/* CSS variables for Tailwind theme mapping */
 /* This allows us to maintain the existing Tailwind class names while using our theme values */
 

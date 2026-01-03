@@ -6,7 +6,7 @@ YELLOW='\\033[1;33m'
 RED='\\033[0;31m'
 NC='\\033[0m'
 
-echo "${YELLOW}🔍 Running pre-push checks...${NC}"
+echo "🔍 Running pre-push checks..."
 
 # Check for uncommitted changes
 echo "${YELLOW}▶ Checking for uncommitted changes...${NC}"
@@ -27,6 +27,17 @@ if [ "$UNTRACKED" -gt 0 ]; then
   echo "${YELLOW}   Consider committing or adding them to .gitignore${NC}"
   echo ""
   git ls-files --others --exclude-standard
+fi
+
+# Run ESLint
+echo "${YELLOW}▶ Running ESLint...${NC}"
+pnpm lint
+
+if [ $? -ne 0 ]; then
+  echo ""
+  echo "${RED}❌ Pre-push check failed: Linting errors detected.${NC}"
+  echo "${YELLOW}   Run 'pnpm lint:fix' to auto-fix issues.${NC}"
+  exit 1
 fi
 
 # Run build check

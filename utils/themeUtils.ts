@@ -3,16 +3,18 @@ import { theme } from './theme';
 // Utility functions to get theme values
 export const getColor = (path: string): string => {
   const keys = path.split('.');
-  let result: any = theme.colors;
-  
+  let result: string | Record<string, unknown> = theme.colors;
+
   for (const key of keys) {
-    result = result[key];
+    if (typeof result === 'object' && result !== null) {
+      result = result[key] as string | Record<string, unknown>;
+    }
     if (result === undefined) {
       throw new Error(`Color path "${path}" not found in theme`);
     }
   }
-  
-  return result;
+
+  return result as string;
 };
 
 export const getFontSize = (size: string): string => {
@@ -50,29 +52,29 @@ export const getShadow = (shadow: string): string => {
 // CSS variable generator for Tailwind
 export const generateCSSVariables = (): string => {
   let css = ':root {\n';
-  
+
   // Flatten colors
-  const flattenColors = (obj: any, prefix: string = ''): Record<string, string> => {
+  const flattenColors = (obj: Record<string, unknown>, prefix: string = ''): Record<string, string> => {
     let flattened: Record<string, string> = {};
-    
+
     for (const [key, value] of Object.entries(obj)) {
       const newKey = prefix ? `${prefix}-${key}` : key;
-      
+
       if (typeof value === 'string') {
         flattened[newKey] = value;
-      } else if (typeof value === 'object') {
-        flattened = { ...flattened, ...flattenColors(value, newKey) };
+      } else if (typeof value === 'object' && value !== null) {
+        flattened = { ...flattened, ...flattenColors(value as Record<string, unknown>, newKey) };
       }
     }
-    
+
     return flattened;
   };
-  
+
   const flatColors = flattenColors(theme.colors);
   for (const [key, value] of Object.entries(flatColors)) {
     css += `  --color-${key}: ${value};\n`;
   }
-  
+
   css += '}\n';
   return css;
 };
