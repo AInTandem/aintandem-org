@@ -5,6 +5,7 @@ pubDate: 2025-01-02
 tags: ['announcement', 'philosophy']
 lang: zh-CN
 heroImage: '/blog-placeholder.jpg'
+urlSlug: welcome
 ---
 
 # 欢迎来到 AInTandem

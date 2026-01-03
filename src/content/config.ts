@@ -20,6 +20,9 @@ const blog = defineCollection({
     tags: z.array(z.string()).default([]),
     lang: z.enum(['zh-TW', 'en', 'zh-CN']).default('zh-TW'),
     draft: z.boolean().default(false),
+    // Custom URL slug to unify multi-language posts
+    // e.g., use same urlSlug for "post.md", "post.en.md", "post.zh-CN.md"
+    urlSlug: z.string().optional(),
   }),
 });
 

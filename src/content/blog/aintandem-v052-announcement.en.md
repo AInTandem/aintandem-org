@@ -4,6 +4,7 @@ description: 'Not just a "sandbox", but a collaborative space where AI agents ca
 pubDate: 2025-01-03
 tags: ['announcement', 'roadmap', 'philosophy']
 lang: en
+urlSlug: aintandem-v052-announcement
 ---
 
 ## The Bottom Line

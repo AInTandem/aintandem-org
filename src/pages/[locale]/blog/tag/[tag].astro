@@ -56,7 +56,7 @@ const tagLabel = translations.blog.tags[tag as keyof typeof translations.blog.ta
     <div class="blog-grid">
       {filteredPosts.length > 0 ? (
         filteredPosts.map(post => (
-          <a href={getLocalizedPath(locale, `/blog/${post.slug}/`)} class="blog-post-card">
+          <a href={getLocalizedPath(locale, `/blog/${post.data.urlSlug || post.slug}/`)} class="blog-post-card">
             <h3>{post.data.title}</h3>
             <div class="blog-post-meta">
               <time datetime={post.data.pubDate.toISOString()}>

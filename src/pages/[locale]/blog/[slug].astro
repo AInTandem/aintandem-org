@@ -9,7 +9,8 @@ export async function getStaticPaths() {
   return posts.map(post => ({
     params: {
       locale: post.data.lang,
-      slug: post.slug,
+      // Use custom urlSlug from frontmatter if provided, otherwise use default slug
+      slug: post.data.urlSlug || post.slug,
     },
     props: { post },
   }));

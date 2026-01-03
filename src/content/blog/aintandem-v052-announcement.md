@@ -4,6 +4,7 @@ description: '不再是「沙盒」，而是一個能讓 AI agents 真正坐下�
 pubDate: 2025-01-03
 tags: ['announcement', 'roadmap', 'philosophy']
 lang: zh-TW
+urlSlug: aintandem-v052-announcement
 ---
 
 ## 結論先講
