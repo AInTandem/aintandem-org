@@ -1,0 +1,102 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getCollection } from 'astro:content';
+import { SUPPORTED_TAGS } from '../../content/config';
+
+export async function getStaticPaths() {
+  const posts = await getCollection('blog');
+  return posts.map(post => ({
+    params: { slug: post.slug },
+    props: { post },
+  }));
+}
+
+const { post } = Astro.props;
+const { Content } = await post.render();
+
+// Get related posts based on tags
+const allPosts = await getCollection('blog');
+const relatedPosts = allPosts
+  .filter(p => p.slug !== post.slug && !p.data.draft)
+  .filter(p => p.data.tags.some(t => post.data.tags.includes(t)))
+  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
+  .slice(0, 3);
+---
+
+<BaseLayout
+  title={`${post.data.title} - AInTandem 部落格`}
+  description={post.data.description}
+>
+  <article class="blog-post">
+    <!-- Back button at top -->
+    <a href="/blog" class="blog-back-button">
+      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M19 12H5M12 19l-7-7 7-7"/>
+      </svg>
+      返回部落格
+    </a>
+
+    <div class="blog-post-header">
+      <div class="blog-post-meta">
+        <time datetime={post.data.pubDate.toISOString()}>
+          {post.data.pubDate.toLocaleDateString('zh-TW', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
+          })}
+        </time>
+        {post.data.updatedDate && (
+          <span> · 更新於 {post.data.updatedDate.toLocaleDateString('zh-TW')}</span>
+        )}
+        {post.data.lang && (
+          <span> · {post.data.lang === 'zh-TW' ? '中文' : 'English'}</span>
+        )}
+      </div>
+
+      <h1 class="blog-post-title">{post.data.title}</h1>
+
+      {post.data.tags.length > 0 && (
+        <div class="blog-post-tags">
+          {post.data.tags.map(tag => {
+            const tagLabel = SUPPORTED_TAGS.find(t => t.name === tag)?.label || tag;
+            return <a href={`/blog/tag/${tag}`} class="tag">{tagLabel}</a>;
+          })}
+        </div>
+      )}
+    </div>
+
+    <div class="blog-post-content">
+      <Content />
+    </div>
+
+    <!-- Back to blog link -->
+    <div class="blog-post-nav">
+      <a href="/blog" class="btn-secondary">← 返回文章列表</a>
+    </div>
+
+    <!-- Related posts -->
+    {relatedPosts.length > 0 && (
+      <div class="related-posts">
+        <h2>相關文章</h2>
+        <div class="related-posts-grid">
+          {relatedPosts.map(relatedPost => (
+            <a href={`/blog/${relatedPost.slug}/`} class="blog-post-card">
+              <h3>{relatedPost.data.title}</h3>
+              <div class="blog-post-meta">
+                <time datetime={relatedPost.data.pubDate.toISOString()}>
+                  {relatedPost.data.pubDate.toLocaleDateString('zh-TW', {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric'
+                  })}
+                </time>
+              </div>
+              <p class="blog-post-excerpt">{relatedPost.data.description}</p>
+            </a>
+          ))}
+        </div>
+      </div>
+    )}
+  </article>
+</BaseLayout>
+

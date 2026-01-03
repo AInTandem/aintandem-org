@@ -37,6 +37,6 @@ export default [
     },
   },
   {
-    ignores: ['dist', 'node_modules', '*.config.js', 'src/styles/theme.css'],
+    ignores: ['dist', 'node_modules', '*.config.js', 'src/styles/theme.css', '.astro'],
   },
 ];

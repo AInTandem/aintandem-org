@@ -1,0 +1,77 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getCollection } from 'astro:content';
+import { SUPPORTED_TAGS } from '../../content/config';
+
+// Get all published blog posts
+const allPosts = (await getCollection('blog'))
+  .filter(post => !post.data.draft)
+  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+
+// Get all unique tags
+const allTags = SUPPORTED_TAGS.map(t => t.name);
+
+// Get current tag filter
+const { tag } = Astro.params;
+const filteredPosts = tag
+  ? allPosts.filter(post => post.data.tags.includes(tag))
+  : allPosts;
+---
+
+<BaseLayout
+  title="部落格 - AInTandem"
+  description="AInTandem 專案的技術文章與更新分享"
+>
+  <div class="section">
+    <div class="section-header">
+      <h1 class="section-title">部落格</h1>
+      <p class="section-subtitle">技術文章、專案更新、與 AI 協作的實踐分享</p>
+      <div class="section-accent-line"></div>
+    </div>
+
+    <!-- Tag Filter -->
+    {allTags.length > 0 && (
+      <div class="tag-filter">
+        <a href="/blog" class:tag-active={!tag} class="tag">全部</a>
+        {SUPPORTED_TAGS.map(t => (
+          <a href={`/blog/tag/${t.name}`} class:tag-active={tag === t.name} class="tag">{t.label}</a>
+        ))}
+      </div>
+    )}
+
+    <!-- Blog Posts Grid -->
+    <div class="blog-grid">
+      {filteredPosts.length > 0 ? (
+        filteredPosts.map(post => (
+          <a href={`/blog/${post.slug}/`} class="blog-post-card">
+            <h3>{post.data.title}</h3>
+            <div class="blog-post-meta">
+              <time datetime={post.data.pubDate.toISOString()}>
+                {post.data.pubDate.toLocaleDateString('zh-TW', {
+                  year: 'numeric',
+                  month: 'long',
+                  day: 'numeric'
+                })}
+              </time>
+              {post.data.updatedDate && (
+                <span> · 更新於 {post.data.updatedDate.toLocaleDateString('zh-TW')}</span>
+              )}
+            </div>
+            <p class="blog-post-excerpt">{post.data.description}</p>
+            {post.data.tags.length > 0 && (
+              <div class="blog-post-tags">
+                {post.data.tags.map(t => {
+                  const tagLabel = SUPPORTED_TAGS.find(st => st.name === t)?.label || t;
+                  return <span class="tag">{tagLabel}</span>;
+                })}
+              </div>
+            )}
+          </a>
+        ))
+      ) : (
+        <p class="text-slate-400">尚無文章</p>
+      )}
+    </div>
+  </div>
+</BaseLayout>
+

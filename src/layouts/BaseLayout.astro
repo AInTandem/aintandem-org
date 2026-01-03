@@ -1,0 +1,64 @@
+---
+import '../styles/theme.css';
+import '../styles/semantic.css';
+import NavigationDesktop from '../components/NavigationDesktop.astro';
+import NavigationMobile from '../components/NavigationMobile.astro';
+import BlogNavigationDesktop from '../components/BlogNavigationDesktop.astro';
+import BlogNavigationMobile from '../components/BlogNavigationMobile.astro';
+
+interface Props {
+  title?: string;
+  description?: string;
+  showNavigation?: boolean;
+}
+
+const {
+  title = 'AInTandem - 人與 AI 的共生創作場',
+  description = '致力於本地化及專屬化 AI，實現人與 AI 無縫共享知識及經驗的次世代工作場域。',
+  showNavigation = true
+} = Astro.props;
+
+// Use BlogNavigation for /blog paths
+const currentPath = Astro.url.pathname;
+const isBlogPath = currentPath.startsWith('/blog');
+---
+
+<!doctype html>
+<html lang="zh-TW">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="description" content={description} />
+    <meta name="viewport" content="width=device-width" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="generator" content={Astro.generator} />
+    <title>{title}</title>
+  </head>
+  <body class="min-h-screen selection:bg-cyan-500/30 selection:text-cyan-200" class:list={[{ "pt-20": showNavigation }]}>
+    {showNavigation && (
+      isBlogPath ? (
+        <>
+          <BlogNavigationDesktop />
+          <BlogNavigationMobile />
+        </>
+      ) : (
+        <>
+          <NavigationDesktop />
+          <NavigationMobile />
+        </>
+      )
+    )}
+    <slot />
+  </body>
+</html>
+
+<style is:global>
+  /* Base global styles */
+  body {
+    font-family: var(--font-family-sans);
+    background-color: var(--color-background-primary);
+    color: var(--color-text-secondary);
+    padding-top: 80px; /* Space for fixed navigation */
+  }
+
+  /* All blog-specific styles have been moved to semantic.css for consistency */
+</style>

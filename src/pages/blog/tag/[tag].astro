@@ -1,0 +1,102 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import { getCollection } from 'astro:content';
+import { SUPPORTED_TAGS } from '../../../content/config';
+
+export async function getStaticPaths() {
+  const posts = await getCollection('blog');
+  const existingTags = [...new Set(posts.flatMap(post => post.data.tags))];
+
+  // Generate paths for all supported tags
+  return SUPPORTED_TAGS.map(tag => ({
+    params: { tag: tag.name },
+    props: { tag: tag.name, posts },
+  }));
+}
+
+const { tag } = Astro.props;
+const posts = (await getCollection('blog'))
+  .filter(post => !post.data.draft && post.data.tags.includes(tag))
+  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+
+// Get current tag label
+const currentTagLabel = SUPPORTED_TAGS.find(t => t.name === tag)?.label || tag;
+---
+
+<BaseLayout
+  title={`${currentTagLabel} - AInTandem 部落格`}
+  description={`包含「${currentTagLabel}」標籤的所有文章`}
+>
+  <div class="section">
+    <div class="section-header">
+      <h1 class="section-title">{currentTagLabel}</h1>
+      <p class="section-subtitle">{posts.length} 篇文章</p>
+      <div class="section-accent-line"></div>
+    </div>
+
+    <!-- Tag Filter -->
+    <div class="tag-filter">
+      <a href="/blog" class="tag">全部</a>
+      {SUPPORTED_TAGS.map(t => (
+        <a href={`/blog/tag/${t.name}`} class:tag-active={tag === t.name} class="tag">{t.label}</a>
+      ))}
+    </div>
+
+    <!-- Blog Posts Grid -->
+    <div class="blog-grid">
+      {posts.map(post => (
+        <a href={`/blog/${post.slug}/`} class="blog-post-card">
+          <h3>{post.data.title}</h3>
+          <div class="blog-post-meta">
+            <time datetime={post.data.pubDate.toISOString()}>
+              {post.data.pubDate.toLocaleDateString('zh-TW', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+              })}
+            </time>
+            {post.data.updatedDate && (
+              <span> · 更新於 {post.data.updatedDate.toLocaleDateString('zh-TW')}</span>
+            )}
+          </div>
+          <p class="blog-post-excerpt">{post.data.description}</p>
+          {post.data.tags.length > 0 && (
+            <div class="blog-post-tags">
+              {post.data.tags.map(t => {
+                const tagLabel = SUPPORTED_TAGS.find(st => st.name === t)?.label || t;
+                return <span class="tag">{tagLabel}</span>;
+              })}
+            </div>
+          )}
+        </a>
+      ))}
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .tag-filter {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--spacing-3);
+    margin-bottom: var(--spacing-8);
+  }
+
+  .tag-active {
+    background-color: var(--color-primary-500);
+    color: var(--color-slate-950);
+  }
+
+  .blog-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: var(--spacing-6);
+  }
+
+  @media (min-width: 768px) {
+    .blog-grid {
+      grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+      gap: var(--spacing-8);
+    }
+  }
+</style>

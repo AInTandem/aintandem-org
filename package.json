@@ -4,9 +4,11 @@
   "version": "1.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
-    "build": "vite build",
-    "preview": "vite preview",
+    "dev": "astro dev",
+    "dev:vite": "vite",
+    "build": "astro build",
+    "build:vite": "vite build",
+    "preview": "astro preview",
     "generate-theme": "node generate-theme.js",
     "prebuild": "npm run generate-theme",
     "hooks:install": "bash scripts/setup-hooks.sh",
@@ -19,9 +21,12 @@
     "react-dom": "^19.2.3"
   },
   "devDependencies": {
+    "@astrojs/react": "^4.4.2",
+    "@astrojs/rss": "^4.0.14",
     "@eslint/js": "^9.39.2",
     "@types/node": "^22.14.0",
     "@vitejs/plugin-react": "^5.0.0",
+    "astro": "^5.16.6",
     "eslint": "^9.39.2",
     "eslint-plugin-jsx-a11y": "^6.10.2",
     "eslint-plugin-react": "^7.37.5",
