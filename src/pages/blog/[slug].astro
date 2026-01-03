@@ -14,6 +14,36 @@ export async function getStaticPaths() {
 const { post } = Astro.props;
 const { Content } = await post.render();
 
+// Generate JSON-LD structured data
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": post.data.title,
+  "description": post.data.description,
+  "datePublished": post.data.pubDate.toISOString(),
+  "dateModified": post.data.updatedDate?.toISOString() || post.data.pubDate.toISOString(),
+  "inLanguage": post.data.lang || "zh-TW",
+  "author": {
+    "@type": "Organization",
+    "name": "AInTandem Team",
+    "url": "https://aintandem.org"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "AInTandem",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://aintandem.org/logo.png"
+    }
+  },
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": `https://aintandem.org/blog/${post.slug}/`
+  },
+  "keywords": post.data.tags.join(", "),
+  "articleSection": post.data.tags[0] || "Technology"
+};
+
 // Get related posts based on tags
 const allPosts = await getCollection('blog');
 const relatedPosts = allPosts
@@ -26,7 +56,15 @@ const relatedPosts = allPosts
 <BaseLayout
   title={`${post.data.title} - AInTandem 部落格`}
   description={post.data.description}
+  image={post.data.heroImage}
+  ogType="article"
+  article={{
+    publishedTime: post.data.pubDate.toISOString(),
+    modifiedTime: post.data.updatedDate?.toISOString(),
+    tag: post.data.tags
+  }}
 >
+  <script is:inline set:html={JSON.stringify(jsonLd)} type="application/ld+json" />
   <article class="blog-post">
     <!-- Back button at top -->
     <a href="/blog" class="blog-back-button">

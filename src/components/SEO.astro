@@ -1,0 +1,89 @@
+---
+/**
+ * SEO Component
+ * Provides comprehensive meta tags for search engines and social media sharing
+ */
+interface Props {
+  title?: string;
+  description?: string;
+  image?: string;
+  imageAlt?: string;
+  twitterCard?: 'summary' | 'summary_large_image' | 'app' | 'player';
+  canonicalURL?: string;
+  noindex?: boolean;
+  nofollow?: boolean;
+  ogType?: 'website' | 'article' | 'product' | 'profile';
+  article?: {
+    publishedTime?: string;
+    modifiedTime?: string;
+    expirationTime?: string;
+    author?: string;
+    section?: string;
+    tag?: string[];
+  };
+}
+
+const {
+  title = 'AInTandem - 人與 AI 的共生創作場',
+  description = '致力於本地化及專屬化 AI，實現人與 AI 無縫共享知識及經驗的次世代工作場域。',
+  image = new URL('/logo.png', Astro.site),
+  imageAlt = 'AInTandem Logo',
+  twitterCard = 'summary_large_image',
+  canonicalURL = new URL(Astro.url.pathname, Astro.site).href,
+  noindex = false,
+  nofollow = false,
+  ogType = 'website',
+  article = undefined,
+} = Astro.props;
+
+const fullTitle = title.includes('AInTandem') ? title : `${title} - AInTandem`;
+const robotsDirectives = [noindex && 'noindex', nofollow && 'nofollow'].filter(Boolean).join(', ');
+const imagePath = typeof image === 'string' ? new URL(image, Astro.site).href : image.href;
+---
+
+<!-- Primary Meta Tags -->
+<title>{fullTitle}</title>
+<meta name="title" content={fullTitle} />
+<meta name="description" content={description} />
+<link rel="canonical" href={canonicalURL} />
+
+{robotsDirectives && <meta name="robots" content={robotsDirectives} />}
+
+<!-- Open Graph / Facebook -->
+<meta property="og:type" content={ogType} />
+<meta property="og:url" content={canonicalURL} />
+<meta property="og:title" content={fullTitle} />
+<meta property="og:description" content={description} />
+<meta property="og:image" content={imagePath} />
+<meta property="og:image:alt" content={imageAlt} />
+<meta property="og:locale" content="zh_TW" />
+<meta property="og:site_name" content="AInTandem" />
+
+{article && (
+  <>
+    {article.publishedTime && <meta property="article:published_time" content={article.publishedTime} />}
+    {article.modifiedTime && <meta property="article:modified_time" content={article.modifiedTime} />}
+    {article.expirationTime && <meta property="article:expiration_time" content={article.expirationTime} />}
+    {article.author && <meta property="article:author" content={article.author} />}
+    {article.section && <meta property="article:section" content={article.section} />}
+    {article.tag && article.tag.map(tag => <meta property="article:tag" content={tag} />)}
+  </>
+)}
+
+<!-- Twitter -->
+<meta name="twitter:card" content={twitterCard} />
+<meta name="twitter:url" content={canonicalURL} />
+<meta name="twitter:title" content={fullTitle} />
+<meta name="twitter:description" content={description} />
+<meta name="twitter:image" content={imagePath} />
+<meta name="twitter:image:alt" content={imageAlt} />
+
+<!-- Additional SEO Meta Tags -->
+<meta name="keywords" content="AI, 人工智慧, 共生創作, 本地化 AI, 專屬化 AI, AInTandem" />
+<meta name="author" content="AInTandem Team" />
+<meta name="theme-color" content="#0891b2" />
+
+<!-- Link preview for modern browsers -->
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
